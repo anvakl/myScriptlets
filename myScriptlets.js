@@ -19,20 +19,19 @@ function addEventListenerDefuser2(
     const rePattern = safe.patternToRegex(pattern);
     const log = shouldLog(extraArgs);
     const debug = shouldDebug(extraArgs);
-	const elems = document.querySelectorAll(selector);
     const trapEddEventListeners = ( ) => {
         const eventListenerHandler = {
             apply: function(target, thisArg, args) {
-                let type, handler, targetElem;
+                let type, handler;
 				let matchesTarg = false;
                 try {
                     type = String(args[0]);
                     handler = String(args[1]);
-					taegetElem = thisArg;
                 } catch(ex) {
                 }
-				for ( const elem of elems ) {
-                  if(elem === thisArg){
+                const elems = document.querySelectorAll(selector);
+                for ( const elem of elems ) {
+                    if(elem === thisArg){
                     matchesTarg = true;
                     break;
                   }
