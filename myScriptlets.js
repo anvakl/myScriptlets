@@ -67,6 +67,59 @@ function addEventListenerDefuser2(
     }, extraArgs.runAt);
 }
 
+/// no-setInterval-if2.js
+/// alias nosiif2.js
+/// dependency safe-self.fn
+function noSetIntervalIf2(
+    needle = '',
+    delay = ''
+) {
+    if ( typeof needle !== 'string' ) { return; }
+    const safe = safeSelf();
+    const needleNot = needle.charAt(0) === '!';
+    if ( needleNot ) { needle = needle.slice(1); }
+    if ( delay === '' ) { delay = undefined; }
+    let delayNot = false;
+    if ( delay !== undefined ) {
+        delayNot = delay.charAt(0) === '!';
+        if ( delayNot ) { delay = delay.slice(1); }
+        delay = parseInt(delay, 10);
+    }
+    const log = needleNot === false && needle === '' && delay === undefined
+        ? console.log
+        : undefined;
+    const reNeedle = safe.patternToRegex(needle);
+    self.setInterval = new Proxy(self.setInterval, {
+        apply: function(target, thisArg, args) {
+            const a = args[0] instanceof Function
+                ? String(safe.Function_toString(args[0]))
+                : String(args[0]);
+            const b = args[1];
+            if ( log !== undefined ) {
+                log('uBO: setInterval("%s", %s)', a, b);
+            } else {
+                let defuse;
+                if ( needle !== '' ) {
+                    defuse = reNeedle.test(a) !== needleNot;
+                }
+                if ( defuse !== false && delay !== undefined ) {
+                    defuse = (b === delay || isNaN(b) && isNaN(delay) ) !== delayNot;
+                }
+                if ( defuse ) {
+                    return;
+                }
+            }
+            return Reflect.apply(target, thisArg, args);
+        },
+        get(target, prop, receiver) {
+            if ( prop === 'toString' ) {
+                return target.toString.bind(target);
+            }
+            return Reflect.get(target, prop, receiver);
+        },
+    });
+}
+
 /// no-setTimeout-if2.js
 /// alias nostif2.js
 /// dependency safe-self.fn
