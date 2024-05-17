@@ -172,3 +172,28 @@ function noSetTimeoutIf2(
         },
     });
 }
+
+/// old-reddit-gallery.js
+(function() {
+    var e = "#gallery-preview",
+      t = ".gallery-tiles",
+      p = "#media-preview";
+   $(".gallery-navigation").click(function() {
+      var n = $(this),
+         r = n.data("action"),
+         i = n.data("id36"),
+         s = n.data("media-id"),
+         o = [e, i, s].join("-"),
+         u, a;
+      if (r === "carousel") {
+         var f = n.data("new-item");
+         if (!f) return;
+         u = o, a = [e, i, f].join("-")
+      } else if (r === "preview") u = [p, i].join('-'), u = [u, t].join(' '), a = o;
+      else {
+         if (r !== "back") return;
+         u = o, a = [p, i].join('-'), a = [a, t].join(' ')
+      }
+      $(u).css("display", "none"), $(a).css("display", "")
+   })
+})();
