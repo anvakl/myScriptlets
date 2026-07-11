@@ -125,7 +125,8 @@ function noSetIntervalIf2(
 /// dependency safe-self.fn
 function noSetTimeoutIf2(
     needle = '',
-    delay = ''
+    delay = '',
+    logging = false
 ) {
     if ( typeof needle !== 'string' ) { return; }
     const safe = safeSelf();
@@ -175,8 +176,8 @@ function noSetTimeoutIf2(
                     defuse = delayMatch;
                 }
                 if ( defuse ) {
-                    if ( log !== undefined ) {
-                        log('uBO:defusing setTimeout("%s", %s)', a, b);
+                    if(logging){
+                       console.log('uBO:defusing setTimeout("%s", %s)', a, b);
                     }
                     return;
                 }
