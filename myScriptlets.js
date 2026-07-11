@@ -120,6 +120,7 @@ function noSetIntervalIf2(
     });
 }
 
+
 /// no-setTimeout-if2.js
 /// alias nostif2.js
 /// dependency safe-self.fn
@@ -133,10 +134,17 @@ function noSetTimeoutIf2(
     if ( needleNot ) { needle = needle.slice(1); }
     if ( delay === '' ) { delay = undefined; }
     let delayNot = false;
+    let delayArray = false;
     if ( delay !== undefined ) {
         delayNot = delay.charAt(0) === '!';
         if ( delayNot ) { delay = delay.slice(1); }
-        delay = parseInt(delay, 10);
+        delayArray = delay.charAt(0) === '[';
+        if ( delayArray ) { 
+           delay = Array.from(delay.slice(1,-1).split('|'));
+           for(d in delay){
+               delay[d] = parseInt(delay[d], 10);
+           }
+        }else if ( delayNot ) { delay = parseInt(delay, 10); }
     }
     const log = needleNot === false && needle === '' && delay === undefined
         ? console.log
@@ -156,9 +164,21 @@ function noSetTimeoutIf2(
                     defuse = reNeedle.test(a) !== needleNot;
                 }
                 if ( defuse !== false && delay !== undefined ) {
-                    defuse = (b === delay || isNaN(b) && isNaN(delay) ) !== delayNot;
+                    let delayMatch = false;
+                    if ( delayArray ){
+                        for(d in delay){
+                            delayMatch = (b === delay[d] || isNaN(b) && isNaN(delay[d]) ) !== delayNot;
+                            if ( !delayMatch ) { break; }
+                        }
+                    }else{
+                         delayMatch = (b === delay || isNaN(b) && isNaN(delay) ) !== delayNot;
+                    }
+                    defuse = delayMatch;
                 }
                 if ( defuse ) {
+                    if ( log !== undefined ) {
+                        log('uBO:defusing setTimeout("%s", %s)', a, b);
+                    }
                     return;
                 }
             }
