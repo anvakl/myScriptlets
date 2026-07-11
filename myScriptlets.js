@@ -120,7 +120,6 @@ function noSetIntervalIf2(
     });
 }
 
-
 /// no-setTimeout-if2.js
 /// alias nostif2.js
 /// dependency safe-self.fn
